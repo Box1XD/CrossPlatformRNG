@@ -1,0 +1,58 @@
+<UserControl
+    x:Class="RandomNumberAvalonia.Views.MainView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:RandomNumberAvalonia.ViewModels"
+    x:DataType="vm:MainViewModel"
+    mc:Ignorable="d">
+
+    <Design.DataContext>
+        <!--
+            This only sets the DataContext for the previewer in an IDE,
+            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+        -->
+        <vm:MainViewModel />
+    </Design.DataContext>
+
+    <Grid ColumnDefinitions="*,2*,*" RowDefinitions="4*,*,*">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="4*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Content="{Binding RandomNumber}"
+            FontSize="300" />
+        <Button
+            Grid.Row="1"
+            Grid.Column="0"
+            Width="400"
+            Height="150"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Command="{Binding GenerateRandomNumberCommand}"
+            Content="开始"
+            FontFamily="雅黑"
+            FontSize="100"
+            TextBlock.TextAlignment="Center" />
+        <Button
+            Grid.Row="1"
+            Grid.Column="2"
+            Width="400"
+            Height="150"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Command="{Binding GenerateRandomNumberCancelCommand}"
+            Content="停止"
+            FontFamily="雅黑"
+            FontSize="100"
+            TextBlock.TextAlignment="Center" />
+    </Grid>
+</UserControl>

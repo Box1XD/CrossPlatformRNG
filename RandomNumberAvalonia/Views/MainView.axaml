@@ -9,8 +9,6 @@
     Width="{Binding $parent[Window].Width}"
     Height="{Binding $parent[Window].Height}"
     x:DataType="vm:MainViewModel"
-    Design.Height="1080"
-    Design.Width="1920"
     mc:Ignorable="d">
     <Design.DataContext>
         <!--
@@ -48,12 +46,17 @@
         OpenPaneLength="500"
         PanePlacement="Left">
         <SplitView.Pane>
-            <Grid RowDefinitions="*,4*,4*">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="{Binding $parent[SplitView].CompactPaneLength}" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="3*" />
+                </Grid.RowDefinitions>
                 <Button
                     Grid.Row="0"
                     Width="{Binding $parent[SplitView].CompactPaneLength}"
                     Height="{Binding $parent[SplitView].CompactPaneLength}"
-                    HorizontalAlignment="Right"
+                    HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Command="{Binding TriggerPanelCommand}"
                     Content="-"
@@ -61,6 +64,7 @@
                 <StackPanel
                     Grid.Row="1"
                     HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
                     IsVisible="{Binding $parent[SplitView].IsPaneOpen}"
                     Orientation="Vertical"
                     Spacing="20">
@@ -88,6 +92,10 @@
                         <ToggleSwitch IsChecked="{Binding IsUniqueEnabled}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="20">
+                        <Label Margin="-40,0,0,0" Content="强随机数" />
+                        <ToggleSwitch IsChecked="{Binding IsStrongRandomNumberGenerator}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="20">
                         <Label Margin="-40,0,0,0" Content="均匀分布" />
                         <ToggleSwitch IsChecked="{Binding IsIntervalEnabled}" />
                     </StackPanel>
@@ -106,7 +114,6 @@
                     Name="RandomNumbers"
                     Grid.Row="2"
                     Width="300"
-                    Height="{Binding $parent[Grid.Row].Height}"
                     Margin="0,10"
                     BorderBrush="Gray"
                     BorderThickness="1"
@@ -122,13 +129,13 @@
             </Grid>
         </SplitView.Pane>
         <SplitView.Content>
-            <Grid Name="grid" MinWidth="500" RowDefinitions="*,*">
+            <Grid Name="grid" MinWidth="500" RowDefinitions="Auto,*">
                 <StackPanel Grid.Row="0">
                     <Label
                         Name="Number"
                         Height="{Binding $parent[Grid].Height}"
                         Content="{Binding RandomNumber}"
-                        FontSize="500" />
+                        FontSize="300" />
                 </StackPanel>
 
                 <StackPanel

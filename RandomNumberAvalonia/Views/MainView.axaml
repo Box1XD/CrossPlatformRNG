@@ -3,11 +3,15 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RandomNumberAvalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:RandomNumberAvalonia.ViewModels"
+    Width="{Binding $parent[Window].Width}"
+    Height="{Binding $parent[Window].Height}"
     x:DataType="vm:MainViewModel"
+    Design.Height="1080"
+    Design.Width="1920"
     mc:Ignorable="d">
-
     <Design.DataContext>
         <!--
             This only sets the DataContext for the previewer in an IDE,
@@ -15,44 +19,147 @@
         -->
         <vm:MainViewModel />
     </Design.DataContext>
+    <UserControl.Styles>
+        <Style Selector="ToggleSwitch">
+            <Setter Property="FontSize" Value="40" />
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="FontSize" Value="40" />
+        </Style>
+        <Style Selector="Label">
+            <Setter Property="FontSize" Value="40" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="NumericUpDown">
+            <Setter Property="FontSize" Value="40" />
+            <Setter Property="Width" Value="200" />
+            <Setter Property="FormatString" Value="0" />
+        </Style>
+    </UserControl.Styles>
+    <SplitView
+        Width="{Binding $parent[UserControl].Width}"
+        Height="{Binding $parent[UserControl].Height}"
+        CompactPaneLength="50"
+        DisplayMode="CompactInline"
+        IsPaneOpen="{Binding IsPanelOpen}"
+        OpenPaneLength="500"
+        PanePlacement="Left">
+        <SplitView.Pane>
+            <Grid RowDefinitions="*,4*,4*">
+                <Button
+                    Grid.Row="0"
+                    Width="{Binding $parent[SplitView].CompactPaneLength}"
+                    Height="{Binding $parent[SplitView].CompactPaneLength}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Command="{Binding TriggerPanelCommand}"
+                    Content="-"
+                    TextBlock.TextAlignment="Center" />
+                <StackPanel
+                    Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    IsVisible="{Binding $parent[SplitView].IsPaneOpen}"
+                    Orientation="Vertical"
+                    Spacing="20">
+                    <StackPanel Orientation="Horizontal" Spacing="20">
+                        <Label Content="最小值" />
+                        <NumericUpDown
+                            Name="MinimumNumeric"
+                            Maximum="{Binding #MaximumNumeric.Value}"
+                            Minimum="0"
+                            Watermark="最小值"
+                            Value="{Binding MinValue}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="20">
+                        <Label Content="最大值" />
+                        <NumericUpDown
+                            Name="MaximumNumeric"
+                            Maximum="2147483647"
+                            Minimum="{Binding #MinimumNumeric.Value}"
+                            Watermark="最大值"
+                            Value="{Binding MaxValue}" />
+                    </StackPanel>
 
-    <Grid ColumnDefinitions="*,2*,*" RowDefinitions="4*,*,*">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="4*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Label
-            Grid.Row="0"
-            Grid.Column="0"
-            Grid.ColumnSpan="3"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Content="{Binding RandomNumber}"
-            FontSize="300" />
-        <Button
-            Grid.Row="1"
-            Grid.Column="0"
-            Width="400"
-            Height="150"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Command="{Binding GenerateRandomNumberCommand}"
-            Content="开始"
-            FontFamily="雅黑"
-            FontSize="100"
-            TextBlock.TextAlignment="Center" />
-        <Button
-            Grid.Row="1"
-            Grid.Column="2"
-            Width="400"
-            Height="150"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Command="{Binding GenerateRandomNumberCancelCommand}"
-            Content="停止"
-            FontFamily="雅黑"
-            FontSize="100"
-            TextBlock.TextAlignment="Center" />
-    </Grid>
+                    <StackPanel Orientation="Horizontal" Spacing="20">
+                        <Label Content="不重复" />
+                        <ToggleSwitch IsChecked="{Binding IsUniqueEnabled}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="20">
+                        <Label Margin="-40,0,0,0" Content="均匀分布" />
+                        <ToggleSwitch IsChecked="{Binding IsIntervalEnabled}" />
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding IsIntervalEnabled}" Orientation="Horizontal" Spacing="20">
+                        <Label Margin="40,0,0,0" Content="区间" />
+                        <NumericUpDown
+                            Name="Interval"
+                            Maximum="{Binding #MaximumNumeric.Value}"
+                            Minimum="1"
+                            Watermark="区间"
+                            Value="{Binding Interval}" />
+                    </StackPanel>
+                    <Button HorizontalAlignment="Center" Command="{Binding ClearGeneratedNumbersCommand}" Content="清除" />
+                </StackPanel>
+                <DataGrid
+                    Name="RandomNumbers"
+                    Grid.Row="2"
+                    Width="300"
+                    Height="{Binding $parent[Grid.Row].Height}"
+                    Margin="0,10"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CanUserSortColumns="True"
+                    GridLinesVisibility="Horizontal"
+                    IsReadOnly="True"
+                    IsVisible="{Binding $parent[SplitView].IsPaneOpen}"
+                    ItemsSource="{Binding GeneratedRandomNumbers}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Width="{Binding #RandomNumbers.Width}" Binding="{Binding}" Header="随机数" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </SplitView.Pane>
+        <SplitView.Content>
+            <Grid Name="grid" MinWidth="500" RowDefinitions="*,*">
+                <StackPanel Grid.Row="0">
+                    <Label
+                        Name="Number"
+                        Height="{Binding $parent[Grid].Height}"
+                        Content="{Binding RandomNumber}"
+                        FontSize="500" />
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Row="1"
+                    Width="{Binding $parent[Grid].Width}"
+                    Height="{Binding $parent[Grid].Height}"
+                    VerticalAlignment="Center"
+                    Spacing="20">
+                    <Button
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Width="{Binding $parent.Width}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Command="{Binding GenerateRandomNumberCommand}"
+                        Content="开始"
+                        FontFamily="雅黑"
+                        FontSize="100"
+                        TextBlock.TextAlignment="Center" />
+                    <Button
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Command="{Binding GenerateRandomNumberCancelCommand}"
+                        Content="停止"
+                        FontFamily="雅黑"
+                        FontSize="100"
+                        TextBlock.TextAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </SplitView.Content>
+    </SplitView>
 </UserControl>

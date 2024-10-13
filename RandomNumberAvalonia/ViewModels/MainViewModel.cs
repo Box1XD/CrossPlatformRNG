@@ -1,13 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using RandomNumberAvalonia.Core;
 using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using RandomNumberAvalonia.Core;
-using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
-using System.Linq;
-using System.Collections.ObjectModel;
 
 namespace RandomNumberAvalonia.ViewModels;
 
@@ -93,15 +93,12 @@ public partial class MainViewModel : ViewModelBase
             }
             while (!token.IsCancellationRequested);
         }
-        catch (OperationCanceledException)
+        finally
         {
             while (!IsUniqueNumber(RandomNumber) || !IsNumberInAllowedRange(RandomNumber))
             {
                 RandomNumber = await randomNumberGenerator!.Next();
             }
-        }
-        finally
-        {
             GeneratedRandomNumbers.Add(RandomNumber);
         }
     }

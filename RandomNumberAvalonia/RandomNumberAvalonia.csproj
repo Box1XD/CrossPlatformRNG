@@ -5,6 +5,7 @@
     <LangVersion>latest</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <Platforms>AnyCPU;x64</Platforms>
+    <Version>1.0.0</Version>
   </PropertyGroup>
   
   <ItemGroup>
@@ -24,5 +25,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RandomNumberAvalonia.Core\RandomNumberAvalonia.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Converters\" />
   </ItemGroup>
 </Project>

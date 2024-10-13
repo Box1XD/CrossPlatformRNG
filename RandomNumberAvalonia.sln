@@ -9,10 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RandomNumberAvalonia.Androi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RandomNumberAvalonia.Desktop", "RandomNumberAvalonia.Desktop\RandomNumberAvalonia.Desktop.csproj", "{66631006-7183-447C-ACFE-D3B1EE65638C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RandomNumberAvalonia.iOS", "RandomNumberAvalonia.iOS\RandomNumberAvalonia.iOS.csproj", "{25B75876-6F17-4F4A-AC57-20FC7587DE6B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RandomNumberAvalonia.Browser", "RandomNumberAvalonia.Browser\RandomNumberAvalonia.Browser.csproj", "{AE6D2834-0AEA-47DC-ADF1-76EC43EDAAB4}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{3A917EB2-F3E2-4501-91E8-84A1719A43D9}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Packages.props = Directory.Packages.props
@@ -58,26 +54,6 @@ Global
 		{66631006-7183-447C-ACFE-D3B1EE65638C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{66631006-7183-447C-ACFE-D3B1EE65638C}.Release|x64.ActiveCfg = Release|x64
 		{66631006-7183-447C-ACFE-D3B1EE65638C}.Release|x64.Build.0 = Release|x64
-		{25B75876-6F17-4F4A-AC57-20FC7587DE6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{25B75876-6F17-4F4A-AC57-20FC7587DE6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{25B75876-6F17-4F4A-AC57-20FC7587DE6B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{25B75876-6F17-4F4A-AC57-20FC7587DE6B}.Debug|x64.ActiveCfg = Debug|x64
-		{25B75876-6F17-4F4A-AC57-20FC7587DE6B}.Debug|x64.Build.0 = Debug|x64
-		{25B75876-6F17-4F4A-AC57-20FC7587DE6B}.Debug|x64.Deploy.0 = Debug|x64
-		{25B75876-6F17-4F4A-AC57-20FC7587DE6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{25B75876-6F17-4F4A-AC57-20FC7587DE6B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{25B75876-6F17-4F4A-AC57-20FC7587DE6B}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{25B75876-6F17-4F4A-AC57-20FC7587DE6B}.Release|x64.ActiveCfg = Release|x64
-		{25B75876-6F17-4F4A-AC57-20FC7587DE6B}.Release|x64.Build.0 = Release|x64
-		{25B75876-6F17-4F4A-AC57-20FC7587DE6B}.Release|x64.Deploy.0 = Release|x64
-		{AE6D2834-0AEA-47DC-ADF1-76EC43EDAAB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AE6D2834-0AEA-47DC-ADF1-76EC43EDAAB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AE6D2834-0AEA-47DC-ADF1-76EC43EDAAB4}.Debug|x64.ActiveCfg = Debug|x64
-		{AE6D2834-0AEA-47DC-ADF1-76EC43EDAAB4}.Debug|x64.Build.0 = Debug|x64
-		{AE6D2834-0AEA-47DC-ADF1-76EC43EDAAB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AE6D2834-0AEA-47DC-ADF1-76EC43EDAAB4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AE6D2834-0AEA-47DC-ADF1-76EC43EDAAB4}.Release|x64.ActiveCfg = Release|x64
-		{AE6D2834-0AEA-47DC-ADF1-76EC43EDAAB4}.Release|x64.Build.0 = Release|x64
 		{76BCEAB9-F860-49C5-B95C-7C3112E20432}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{76BCEAB9-F860-49C5-B95C-7C3112E20432}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76BCEAB9-F860-49C5-B95C-7C3112E20432}.Debug|x64.ActiveCfg = Debug|x64

@@ -12,11 +12,28 @@
 
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ErrorReport>none</ErrorReport>
+    <!--<PublishAot>True</PublishAot>-->
   </PropertyGroup>
 
   <PropertyGroup Label="Avalonia">
     <AvaloniaUseCompiledBindingsByDefault>True</AvaloniaUseCompiledBindingsByDefault>
+    <IncludeSymbols>False</IncludeSymbols>
+    <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\logo.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" />
@@ -26,5 +43,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RandomNumberAvalonia\RandomNumberAvalonia.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Remove="logo.ico" />
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,7 +27,7 @@ public partial class MainViewModel : ViewModelBase
     private int randomNumber = 0;
 
     [ObservableProperty]
-    private int interval = 10;
+    private int range = 10;
 
     [ObservableProperty]
     [Range(0, int.MaxValue - 1)]
@@ -34,10 +35,19 @@ public partial class MainViewModel : ViewModelBase
 
     partial void OnMinValueChanged(int value)
     {
-        if (randomNumberGenerator is not null)
+        if (randomNumberGenerator is null)
+        {
+            return;
+        }
+        if (randomNumberGenerator is StrongRandomNumberGenerator)//强随机数生成器区间是(min,max);而弱随机数生成器区间是[min,max)
+        {
+            randomNumberGenerator.MinValue = value - 1;
+        }
+        else
         {
             randomNumberGenerator.MinValue = value;
         }
+        Description = $"{MinValue}≤Number<{MaxValue}";
     }
 
     [ObservableProperty]
@@ -46,17 +56,19 @@ public partial class MainViewModel : ViewModelBase
 
     partial void OnMaxValueChanged(int value)
     {
-        if (randomNumberGenerator is not null)
+        if (randomNumberGenerator is null)
         {
-            randomNumberGenerator.MaxValue = value;
+            return;
         }
+        randomNumberGenerator.MaxValue = value;
+        Description = $"{MinValue}≤Number<{MaxValue}";
     }
 
     [ObservableProperty]
     private bool isUniqueEnabled = false;
 
     [ObservableProperty]
-    private bool isIntervalEnabled = false;
+    private bool isRangeEnabled = false;
 
     [ObservableProperty]
     private bool isStrongRandomNumberGenerator;
@@ -64,17 +76,20 @@ public partial class MainViewModel : ViewModelBase
     partial void OnIsStrongRandomNumberGeneratorChanged(bool value)
     {
         randomNumberGenerator = value ? StrongRandomNumberGenerator.Instance : FakeRandomNumberGenerator.Instance;
-        randomNumberGenerator.MinValue = MinValue;
+        randomNumberGenerator.MinValue = value ? MinValue - 1 : MinValue;
         randomNumberGenerator.MaxValue = MaxValue;
     }
+
+    [ObservableProperty]
+    string description = string.Empty;
 
     public MainViewModel()
     {
         timer = new(TimeSpan.FromMilliseconds(1));
+        IsStrongRandomNumberGenerator = true;
         MinValue = 0;
         MaxValue = 100;
-        IsStrongRandomNumberGenerator = true;
-        IsIntervalEnabled = true;
+        IsRangeEnabled = true;
         IsUniqueEnabled = true;
     }
 
@@ -93,6 +108,9 @@ public partial class MainViewModel : ViewModelBase
             }
             while (!token.IsCancellationRequested);
         }
+        catch (OperationCanceledException)
+        {
+        }
         finally
         {
             while (!IsUniqueNumber(RandomNumber) || !IsNumberInAllowedRange(RandomNumber))
@@ -110,14 +128,15 @@ public partial class MainViewModel : ViewModelBase
 
     public bool IsNumberInAllowedRange(int number)
     {
-        if (!IsIntervalEnabled)
+        if (!IsRangeEnabled)
         {
             return true;
         }
-        var ranges = (int)Math.Ceiling((MaxValue - MinValue) * 1.0 / Interval);//计算划分成多少个区间
-        var avgExistingNumbers = GeneratedRandomNumbers.Count * 1.0 / Interval;//计算每个区间平均有几个数
-        int rangeMinValue = (number / ranges) * ranges;
-        int rangeMaxValue = rangeMinValue + ranges - 1;
-        return GeneratedRandomNumbers.Count(t => t >= rangeMinValue && t <= rangeMaxValue) <= avgExistingNumbers;
+        var interval = (int)Math.Ceiling((MaxValue - MinValue) * 1.0 / Range);//计算划分成多少个区间
+        var avgExistingNumbers = GeneratedRandomNumbers.Count * 1.0 / interval;//计算每个区间平均有几个数
+        int rangeMinValue = MinValue + ((number - MinValue) / Range * Range);
+        int rangeMaxValue = Math.Min(MaxValue, rangeMinValue + Range - 1);
+        var res = GeneratedRandomNumbers.Count(t => t >= rangeMinValue && t <= rangeMaxValue) <= avgExistingNumbers;
+        return res;
     }
 }

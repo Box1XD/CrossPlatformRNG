@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:RandomNumberAvalonia.Views"
     xmlns:vm="using:RandomNumberAvalonia.ViewModels"
-    Title="RandomNumberAvalonia"
+    Title="随机数生成器"
     Icon="/Assets/logo.ico"
     mc:Ignorable="d">
     <views:MainView />

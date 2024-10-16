@@ -113,6 +113,10 @@ public partial class MainViewModel : ViewModelBase
         }
         finally
         {
+            if (GeneratedRandomNumbers.Count >= MaxValue - MinValue)
+            {
+                GeneratedRandomNumbers.Clear();
+            }
             while (!IsUniqueNumber(RandomNumber) || !IsNumberInAllowedRange(RandomNumber))
             {
                 RandomNumber = await randomNumberGenerator!.Next();

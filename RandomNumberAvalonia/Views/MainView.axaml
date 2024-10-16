@@ -88,22 +88,25 @@
                             Value="{Binding MaxValue}" />
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Spacing="20">
+                    <StackPanel Orientation="Horizontal" Spacing="20" ToolTip.Tip="只会生成不重复的随机数，生成过所有范围内数字后重置">
                         <Label Content="不重复" />
                         <ToggleSwitch IsChecked="{Binding IsUniqueEnabled}" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Spacing="20">
+                    <StackPanel Orientation="Horizontal" Spacing="20" ToolTip.Tip="切换后台代码使用的随机数生成器，除非兼容性问题，不建议关闭">
                         <Label Margin="-40,0,0,0" Content="强随机数" />
                         <ToggleSwitch IsChecked="{Binding IsStrongRandomNumberGenerator}" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Spacing="20">
+                    <StackPanel Orientation="Horizontal" Spacing="20" ToolTip.Tip="生成的随机数会在每个区间平均分布">
                         <Label Margin="-40,0,0,0" Content="均匀分布" />
                         <ToggleSwitch IsChecked="{Binding IsRangeEnabled}" />
                     </StackPanel>
-                    <StackPanel IsVisible="{Binding IsRangeEnabled}" Orientation="Horizontal" Spacing="20">
+                    <StackPanel
+                        IsVisible="{Binding IsRangeEnabled}"
+                        Orientation="Horizontal"
+                        Spacing="20"
+                        ToolTip.Tip="从最小值起每多少个数字为一个区间，最大不超过最大值。在均匀分布开启时有效">
                         <Label Margin="40,0,0,0" Content="区间" />
                         <NumericUpDown
-                            Name="Range"
                             Maximum="{Binding #MaximumNumeric.Value}"
                             Minimum="1"
                             Watermark="区间"

@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RandomNumberAvalonia.Core",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RandomNumberAvalonia.Core.UnitTests", "RandomNumberAvalonia.Core.UnitTests\RandomNumberAvalonia.Core.UnitTests.csproj", "{E4EAE189-0D81-4E59-B99B-A4ED6FA28F66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomNumberAvalonia.UnitTests", "RandomNumberAvalonia.UnitTests\RandomNumberAvalonia.UnitTests.csproj", "{10F2E6AE-9CE5-4795-B7ED-A15F2625DC7A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +72,14 @@ Global
 		{E4EAE189-0D81-4E59-B99B-A4ED6FA28F66}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E4EAE189-0D81-4E59-B99B-A4ED6FA28F66}.Release|x64.ActiveCfg = Release|x64
 		{E4EAE189-0D81-4E59-B99B-A4ED6FA28F66}.Release|x64.Build.0 = Release|x64
+		{10F2E6AE-9CE5-4795-B7ED-A15F2625DC7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10F2E6AE-9CE5-4795-B7ED-A15F2625DC7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10F2E6AE-9CE5-4795-B7ED-A15F2625DC7A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{10F2E6AE-9CE5-4795-B7ED-A15F2625DC7A}.Debug|x64.Build.0 = Debug|Any CPU
+		{10F2E6AE-9CE5-4795-B7ED-A15F2625DC7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10F2E6AE-9CE5-4795-B7ED-A15F2625DC7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10F2E6AE-9CE5-4795-B7ED-A15F2625DC7A}.Release|x64.ActiveCfg = Release|Any CPU
+		{10F2E6AE-9CE5-4795-B7ED-A15F2625DC7A}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

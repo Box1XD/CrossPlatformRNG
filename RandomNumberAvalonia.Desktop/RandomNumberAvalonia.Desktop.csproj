@@ -13,7 +13,7 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ErrorReport>none</ErrorReport>
-    <!--<PublishAot>True</PublishAot>-->
+    <PublishAot>false</PublishAot>
   </PropertyGroup>
 
   <PropertyGroup Label="Avalonia">

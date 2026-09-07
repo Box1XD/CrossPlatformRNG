@@ -1,0 +1,99 @@
+<UserControl
+    x:Class="RandomNumberAvalonia.Views.HomePageView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:RandomNumberAvalonia.ViewModels"
+    x:DataType="vm:MainViewModel"
+    d:DesignHeight="760"
+    d:DesignWidth="420"
+    mc:Ignorable="d">
+
+    <!--  首页：只保留随机数本体与上下限  -->
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <StackPanel
+            Grid.Row="0"
+            Margin="24,20,24,0"
+            HorizontalAlignment="Center"
+            Spacing="2">
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="15"
+                FontWeight="SemiBold"
+                Foreground="{DynamicResource AppTextPrimaryBrush}"
+                Text="随机数生成器" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                Classes="pageSubtitle"
+                Text="{Binding Description}" />
+        </StackPanel>
+
+        <!--  Viewbox 让大数字在横竖屏下都自动缩放到合适大小  -->
+        <Viewbox
+            Grid.Row="1"
+            MaxHeight="320"
+            Margin="24,12"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Stretch="Uniform">
+            <TextBlock
+                Classes="bigNumber"
+                FontSize="150"
+                Text="{Binding RandomNumber}" />
+        </Viewbox>
+
+        <Border
+            Grid.Row="2"
+            MaxWidth="520"
+            Margin="16,0,16,12"
+            HorizontalAlignment="Stretch"
+            Classes="card">
+            <Grid ColumnDefinitions="*,*">
+                <StackPanel
+                    Grid.Column="0"
+                    Margin="0,0,8,0"
+                    Spacing="6">
+                    <TextBlock Classes="settingTitle" Text="最小值" />
+                    <NumericUpDown
+                        Name="MinimumNumeric"
+                        Height="42"
+                        HorizontalAlignment="Stretch"
+                        FormatString="0"
+                        FontSize="16"
+                        Maximum="{Binding #MaximumNumeric.Value}"
+                        Minimum="0"
+                        Value="{Binding MinValue}"
+                        Watermark="最小值" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="8,0,0,0"
+                    Spacing="6">
+                    <TextBlock Classes="settingTitle" Text="最大值" />
+                    <NumericUpDown
+                        Name="MaximumNumeric"
+                        Height="42"
+                        HorizontalAlignment="Stretch"
+                        FormatString="0"
+                        FontSize="16"
+                        Maximum="2147483647"
+                        Minimum="{Binding #MinimumNumeric.Value}"
+                        Value="{Binding MaxValue}"
+                        Watermark="最大值" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Button
+            Grid.Row="3"
+            MaxWidth="520"
+            Margin="16,0,16,20"
+            HorizontalAlignment="Stretch"
+            Classes="primary"
+            Classes.running="{Binding IsRunning}"
+            Command="{Binding ToggleStartStopCommand}">
+            <TextBlock Text="{Binding StartStopButtonText}" TextAlignment="Center" />
+        </Button>
+    </Grid>
+</UserControl>

@@ -1,0 +1,141 @@
+<UserControl
+    x:Class="RandomNumberAvalonia.Views.SettingsPageView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:RandomNumberAvalonia.ViewModels"
+    x:DataType="vm:MainViewModel"
+    d:DesignHeight="760"
+    d:DesignWidth="420"
+    mc:Ignorable="d">
+
+    <!--  设置页：所有配置项集中于此，更改即自动保存  -->
+    <ScrollViewer>
+        <StackPanel
+            MaxWidth="560"
+            Margin="24,20,24,24"
+            HorizontalAlignment="Stretch"
+            Spacing="14">
+
+            <TextBlock Classes="pageTitle" Text="设置" />
+
+            <Border Classes="card">
+                <StackPanel>
+                    <TextBlock Classes="sectionTitle" Text="生成规则" />
+
+                    <Grid
+                        Margin="0,14,0,0"
+                        ColumnDefinitions="*,Auto"
+                        ToolTip.Tip="只会生成不重复的随机数，生成过所有范围内数字后重置">
+                        <StackPanel
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Spacing="2">
+                            <TextBlock Classes="settingTitle" Text="不重复" />
+                            <TextBlock Classes="settingDesc" Text="生成过的数字不会再次出现" />
+                        </StackPanel>
+                        <ToggleSwitch
+                            Grid.Column="1"
+                            IsChecked="{Binding IsUniqueEnabled}"
+                            OffContent=""
+                            OnContent="" />
+                    </Grid>
+
+                    <Grid
+                        Margin="0,14,0,0"
+                        ColumnDefinitions="*,Auto"
+                        ToolTip.Tip="切换后台使用的随机数生成器，除非兼容性问题，不建议关闭">
+                        <StackPanel
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Spacing="2">
+                            <TextBlock Classes="settingTitle" Text="强随机数" />
+                            <TextBlock Classes="settingDesc" Text="使用加密安全的随机数生成器" />
+                        </StackPanel>
+                        <ToggleSwitch
+                            Grid.Column="1"
+                            IsChecked="{Binding IsStrongRandomNumberGenerator}"
+                            OffContent=""
+                            OnContent="" />
+                    </Grid>
+
+                    <Grid
+                        Margin="0,14,0,0"
+                        ColumnDefinitions="*,Auto"
+                        ToolTip.Tip="生成的随机数会在每个区间平均分布">
+                        <StackPanel
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Spacing="2">
+                            <TextBlock Classes="settingTitle" Text="均匀分布" />
+                            <TextBlock Classes="settingDesc" Text="生成的数字在每个区间平均分布" />
+                        </StackPanel>
+                        <ToggleSwitch
+                            Grid.Column="1"
+                            IsChecked="{Binding IsRangeEnabled}"
+                            OffContent=""
+                            OnContent="" />
+                    </Grid>
+
+                    <Grid
+                        Margin="0,14,0,0"
+                        ColumnDefinitions="*,Auto"
+                        IsVisible="{Binding IsRangeEnabled}"
+                        ToolTip.Tip="从最小值起每多少个数字为一个区间，最大不超过最大值。在均匀分布开启时有效">
+                        <StackPanel
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Spacing="2">
+                            <TextBlock Classes="settingTitle" Text="区间大小" />
+                            <TextBlock Classes="settingDesc" Text="每个区间的数字个数" />
+                        </StackPanel>
+                        <NumericUpDown
+                            Grid.Column="1"
+                            Width="140"
+                            Height="40"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            FormatString="0"
+                            Maximum="2147483647"
+                            Minimum="1"
+                            Value="{Binding Range}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="card">
+                <StackPanel>
+                    <TextBlock Classes="sectionTitle" Text="数据" />
+                    <Grid
+                        Margin="0,14,0,0"
+                        ColumnDefinitions="*,Auto">
+                        <StackPanel
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Spacing="2">
+                            <TextBlock Classes="settingTitle" Text="清除已生成列表" />
+                            <TextBlock
+                                Classes="settingDesc"
+                                Text="仅重置“不重复”的记忆，不影响历史记录"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <Button
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Classes="subtle"
+                            Command="{Binding ClearGeneratedNumbersCommand}">
+                            <TextBlock Text="清除" TextAlignment="Center" />
+                        </Button>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <TextBlock
+                Margin="6,0"
+                Classes="settingDesc"
+                Text="所有设置更改都会自动保存到本地 config.json"
+                TextWrapping="Wrap" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

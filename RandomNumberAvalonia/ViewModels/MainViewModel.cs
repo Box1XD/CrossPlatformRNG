@@ -1,33 +1,60 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RandomNumberAvalonia.Core;
+using RandomNumberAvalonia.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace RandomNumberAvalonia.ViewModels;
 
+/// <summary>底部导航的三个页面。</summary>
+public enum AppPage
+{
+    Home,
+    History,
+    Settings,
+}
+
 public partial class MainViewModel : ViewModelBase
 {
     private readonly PeriodicTimer timer;
+    private readonly AppSettings? settings;
+    private readonly HistoryStore? history;
+    private HistorySessionViewModel? currentSessionViewModel;
+    private bool isLoading;
     private IRandomNumberGenerator? randomNumberGenerator;
+    private CancellationTokenSource? cts;
 
     [ObservableProperty]
-    private bool isPanelOpen = false;
+    private AppPage currentPage = AppPage.Home;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(StartStopButtonText))]
+    private bool isRunning;
+
+    public string StartStopButtonText => IsRunning ? "停止" : "开始";
 
     [ObservableProperty]
     private ObservableCollection<int> generatedRandomNumbers = [];
+
+    [ObservableProperty]
+    private ObservableCollection<HistorySessionViewModel> historySessions = [];
+
+    public string HistorySummary => $"{HistorySessions.Count} 次启动 · 共 {HistorySessions.Sum(s => s.Entries.Count)} 个数字";
+
+    public bool HasHistory => HistorySessions.Count > 0;
 
     [ObservableProperty]
     private int randomNumber = 0;
 
     [ObservableProperty]
     private int range = 10;
+
+    partial void OnRangeChanged(int value) => SaveSettings();
 
     [ObservableProperty]
     [Range(0, int.MaxValue - 1)]
@@ -47,7 +74,8 @@ public partial class MainViewModel : ViewModelBase
         {
             randomNumberGenerator.MinValue = value;
         }
-        Description = $"{MinValue}≤Number<{MaxValue}";
+        Description = $"{MinValue} ≤ n < {MaxValue}";
+        SaveSettings();
     }
 
     [ObservableProperty]
@@ -61,14 +89,19 @@ public partial class MainViewModel : ViewModelBase
             return;
         }
         randomNumberGenerator.MaxValue = value;
-        Description = $"{MinValue}≤Number<{MaxValue}";
+        Description = $"{MinValue} ≤ n < {MaxValue}";
+        SaveSettings();
     }
 
     [ObservableProperty]
     private bool isUniqueEnabled = false;
 
+    partial void OnIsUniqueEnabledChanged(bool value) => SaveSettings();
+
     [ObservableProperty]
     private bool isRangeEnabled = false;
+
+    partial void OnIsRangeEnabledChanged(bool value) => SaveSettings();
 
     [ObservableProperty]
     private bool isStrongRandomNumberGenerator;
@@ -78,33 +111,100 @@ public partial class MainViewModel : ViewModelBase
         randomNumberGenerator = value ? StrongRandomNumberGenerator.Instance : FakeRandomNumberGenerator.Instance;
         randomNumberGenerator.MinValue = value ? MinValue - 1 : MinValue;
         randomNumberGenerator.MaxValue = MaxValue;
+        SaveSettings();
     }
 
     [ObservableProperty]
     string description = string.Empty;
 
-    public MainViewModel()
+    /// <summary>设计器与单元测试使用的构造函数：不做任何文件读写。</summary>
+    public MainViewModel() : this(null, null)
     {
-        timer = new(TimeSpan.FromMilliseconds(1));
-        IsStrongRandomNumberGenerator = true;
-        MinValue = 0;
-        MaxValue = 100;
-        IsRangeEnabled = true;
-        IsUniqueEnabled = true;
     }
 
-    [RelayCommand]
-    private void TriggerPanel() => IsPanelOpen = !IsPanelOpen;
+    public MainViewModel(AppSettings? settings, HistoryStore? history)
+    {
+        isLoading = true;
+        timer = new(TimeSpan.FromMilliseconds(1));
+        this.settings = settings;
+        this.history = history;
 
-    [RelayCommand(IncludeCancelCommand = true)]
+        MinValue = settings?.MinValue ?? 0;
+        MaxValue = settings?.MaxValue ?? 100;
+        Range = settings?.Range ?? 10;
+        IsUniqueEnabled = settings?.IsUniqueEnabled ?? true;
+        IsRangeEnabled = settings?.IsRangeEnabled ?? true;
+        IsStrongRandomNumberGenerator = settings?.IsStrongRandomNumberGenerator ?? true;
+        Description = $"{MinValue} ≤ n < {MaxValue}";
+        isLoading = false;
+
+        LoadHistorySessions();
+    }
+
+    private void SaveSettings()
+    {
+        if (isLoading || settings is null)
+        {
+            return;
+        }
+        settings.MinValue = MinValue;
+        settings.MaxValue = MaxValue;
+        settings.Range = Range;
+        settings.IsUniqueEnabled = IsUniqueEnabled;
+        settings.IsRangeEnabled = IsRangeEnabled;
+        settings.IsStrongRandomNumberGenerator = IsStrongRandomNumberGenerator;
+        settings.Save();
+    }
+
+    private void LoadHistorySessions()
+    {
+        HistorySessions.Clear();
+        if (history is not null)
+        {
+            foreach (var session in history.Sessions.AsEnumerable().Reverse())
+            {
+                var sessionViewModel = new HistorySessionViewModel(session.StartTime);
+                foreach (var entry in session.Entries)
+                {
+                    sessionViewModel.AddEntry(entry.Value, entry.Time);
+                }
+                HistorySessions.Add(sessionViewModel);
+            }
+        }
+        UpdateHistorySummary();
+    }
+
+    private void RecordHistory(int value)
+    {
+        if (history is null)
+        {
+            return;
+        }
+        history.Append(value, DateTime.Now);
+        if (currentSessionViewModel is null)
+        {
+            currentSessionViewModel = new HistorySessionViewModel(history.CurrentSession.StartTime);
+            HistorySessions.Insert(0, currentSessionViewModel);
+        }
+        currentSessionViewModel.AddEntry(value, DateTime.Now);
+        UpdateHistorySummary();
+    }
+
+    private void UpdateHistorySummary()
+    {
+        OnPropertyChanged(nameof(HistorySummary));
+        OnPropertyChanged(nameof(HasHistory));
+    }
+
     public async Task GenerateRandomNumber(CancellationToken token)
     {
+        IsRunning = true;
         try
         {
             do
             {
                 await timer.WaitForNextTickAsync(token);
-                RandomNumber = await randomNumberGenerator!.Next();
+                RandomNumber = randomNumberGenerator!.Next();
             }
             while (!token.IsCancellationRequested);
         }
@@ -113,20 +213,38 @@ public partial class MainViewModel : ViewModelBase
         }
         finally
         {
+            IsRunning = false;
+            cts?.Dispose();
+            cts = null;
             if (GeneratedRandomNumbers.Count >= MaxValue - MinValue)
             {
                 GeneratedRandomNumbers.Clear();
             }
             while (!IsUniqueNumber(RandomNumber) || !IsNumberInAllowedRange(RandomNumber))
             {
-                RandomNumber = await randomNumberGenerator!.Next();
+                RandomNumber = randomNumberGenerator!.Next();
             }
             GeneratedRandomNumbers.Add(RandomNumber);
+            RecordHistory(RandomNumber);
         }
     }
 
     [RelayCommand]
     public void ClearGeneratedNumbers() => GeneratedRandomNumbers.Clear();
+
+    [RelayCommand]
+    private void ToggleStartStop()
+    {
+        if (IsRunning)
+        {
+            cts?.Cancel();
+        }
+        else
+        {
+            cts = new CancellationTokenSource();
+            _ = GenerateRandomNumber(cts.Token);
+        }
+    }
 
     public bool IsUniqueNumber(int number) => !IsUniqueEnabled || !GeneratedRandomNumbers.Contains(number);
 

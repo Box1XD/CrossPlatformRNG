@@ -6,7 +6,7 @@ namespace RandomNumberAvalonia.Core.UnitTests;
 public class Test_UniqueRandomNumberGenerator
 {
     [Fact]
-    public async Task TestStrongRandomNumberGeneratorSpeed()
+    public void TestStrongRandomNumberGeneratorSpeed()
     {
         var generator = StrongRandomNumberGenerator.Instance;
         generator.MinValue = 0;
@@ -16,7 +16,7 @@ public class Test_UniqueRandomNumberGenerator
         int count = 0;
         while (sw.ElapsedMilliseconds < 1000)
         {
-            number = await generator.Next();
+            number = generator.Next();
             count++;
         }
         sw.Stop();
@@ -24,7 +24,7 @@ public class Test_UniqueRandomNumberGenerator
     }
 
     [Fact]
-    public async Task TestFakeRandomNumberGeneratorSpeed()
+    public void TestFakeRandomNumberGeneratorSpeed()
     {
         var generator = FakeRandomNumberGenerator.Instance;
         generator.MinValue = 0;
@@ -34,7 +34,7 @@ public class Test_UniqueRandomNumberGenerator
         int count = 0;
         while (sw.ElapsedMilliseconds < 1000)
         {
-            number = await generator.Next();
+            number = generator.Next();
             count++;
         }
         sw.Stop();

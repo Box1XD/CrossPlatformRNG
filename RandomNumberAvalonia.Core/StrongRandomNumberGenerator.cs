@@ -15,8 +15,6 @@ public sealed class StrongRandomNumberGenerator : IRandomNumberGenerator
 
     //private ConcurrentDictionary<int, int>? IntervalDictionary;
 
-    private readonly SemaphoreSlim semaphore;
-
     private int fromInclusive = 0;
 
     private int toExclusive = 1;
@@ -50,17 +48,12 @@ public sealed class StrongRandomNumberGenerator : IRandomNumberGenerator
     private StrongRandomNumberGenerator()
     {
         // generatedNumbers = [];
-        semaphore = new(1, 1);
     }
 
-    public async Task<int> Next()
+    public int Next()
     {
-        await semaphore.WaitAsync();
-        int result;
-        result = RandomNumberGenerator.GetInt32(MinValue, MaxValue);
-
-        semaphore.Release();
-        return result;
+        // RandomNumberGenerator.GetInt32 is thread-safe
+        return RandomNumberGenerator.GetInt32(MinValue, MaxValue);
     }
 
     //public void ChangeIntervalStatus(bool isIntervalEnabled)

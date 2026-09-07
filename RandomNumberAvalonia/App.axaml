@@ -10,8 +10,175 @@
         <local:ViewLocator />
     </Application.DataTemplates>
 
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="AppBgBrush" Color="#F4F5FB" />
+                    <SolidColorBrush x:Key="AppCardBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="AppCardBorderBrush" Color="#E5E6F0" />
+                    <SolidColorBrush x:Key="AppTextPrimaryBrush" Color="#1D1D24" />
+                    <SolidColorBrush x:Key="AppTextSecondaryBrush" Color="#6F7080" />
+                    <SolidColorBrush x:Key="AppAccentBrush" Color="#5B5BD6" />
+                    <SolidColorBrush x:Key="AppAccentHoverBrush" Color="#4E4EC8" />
+                    <SolidColorBrush x:Key="AppAccentSoftBrush" Color="#ECEDFB" />
+                    <SolidColorBrush x:Key="AppDangerBrush" Color="#E5484D" />
+                    <SolidColorBrush x:Key="AppDangerHoverBrush" Color="#D93C41" />
+                    <SolidColorBrush x:Key="AppDangerSoftBrush" Color="#FDEBEC" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="AppBgBrush" Color="#16161D" />
+                    <SolidColorBrush x:Key="AppCardBrush" Color="#21212A" />
+                    <SolidColorBrush x:Key="AppCardBorderBrush" Color="#2E2E3B" />
+                    <SolidColorBrush x:Key="AppTextPrimaryBrush" Color="#ECECF3" />
+                    <SolidColorBrush x:Key="AppTextSecondaryBrush" Color="#9C9CAD" />
+                    <SolidColorBrush x:Key="AppAccentBrush" Color="#8B8BF2" />
+                    <SolidColorBrush x:Key="AppAccentHoverBrush" Color="#9B9BF5" />
+                    <SolidColorBrush x:Key="AppAccentSoftBrush" Color="#2A2A42" />
+                    <SolidColorBrush x:Key="AppDangerBrush" Color="#FF6B6E" />
+                    <SolidColorBrush x:Key="AppDangerHoverBrush" Color="#FF8386" />
+                    <SolidColorBrush x:Key="AppDangerSoftBrush" Color="#3A2528" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+
+            <!--  让 Fluent 控件（ToggleSwitch、NumericUpDown 等）跟随应用主色  -->
+            <Color x:Key="SystemAccentColor">#5B5BD6</Color>
+            <Color x:Key="SystemAccentColorLight1">#7474DE</Color>
+            <Color x:Key="SystemAccentColorLight2">#8D8DE6</Color>
+            <Color x:Key="SystemAccentColorLight3">#A6A6EE</Color>
+            <Color x:Key="SystemAccentColorDark1">#4949C7</Color>
+            <Color x:Key="SystemAccentColorDark2">#3A3AA8</Color>
+            <Color x:Key="SystemAccentColorDark3">#2E2E85</Color>
+
+            <!--  底部导航图标（Material Design 图标路径）  -->
+            <StreamGeometry x:Key="HomeIconGeometry">M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z</StreamGeometry>
+            <StreamGeometry x:Key="HistoryIconGeometry">M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z</StreamGeometry>
+            <StreamGeometry x:Key="SettingsIconGeometry">M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z</StreamGeometry>
+
+            <!--  底部导航按钮：纯 ContentPresenter 模板，去掉 Fluent 默认的圆形指示器  -->
+            <ControlTheme x:Key="NavBarItemTheme" TargetType="RadioButton">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource AppTextSecondaryBrush}" />
+                <Setter Property="Padding" Value="12,6" />
+                <Setter Property="MinHeight" Value="52" />
+                <Setter Property="MinWidth" Value="72" />
+                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <ControlTemplate>
+                        <ContentPresenter
+                            x:Name="PART_ContentPresenter"
+                            Background="{TemplateBinding Background}"
+                            Foreground="{TemplateBinding Foreground}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}" />
+                    </ControlTemplate>
+                </Setter>
+                <Style Selector="^:pointerover">
+                    <Setter Property="Foreground" Value="{DynamicResource AppTextPrimaryBrush}" />
+                    <Setter Property="Background" Value="{DynamicResource AppAccentSoftBrush}" />
+                </Style>
+                <Style Selector="^:checked">
+                    <Setter Property="Foreground" Value="{DynamicResource AppAccentBrush}" />
+                </Style>
+                <Style Selector="^:checked:pointerover">
+                    <Setter Property="Foreground" Value="{DynamicResource AppAccentBrush}" />
+                </Style>
+            </ControlTheme>
+        </ResourceDictionary>
+    </Application.Resources>
+
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+
+        <!--  卡片  -->
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="{DynamicResource AppCardBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="Padding" Value="18" />
+        </Style>
+
+        <!--  文字  -->
+        <Style Selector="TextBlock.pageTitle">
+            <Setter Property="FontSize" Value="26" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.pageSubtitle">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextSecondaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.sectionTitle">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextSecondaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.settingTitle">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.settingDesc">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextSecondaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.bigNumber">
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextPrimaryBrush}" />
+        </Style>
+
+        <!--  主操作按钮（开始/停止）  -->
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="{DynamicResource AppAccentBrush}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Height" Value="60" />
+            <Setter Property="CornerRadius" Value="30" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="24,0" />
+        </Style>
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppAccentHoverBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style Selector="Button.primary:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppAccentHoverBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <!--  运行中变为“停止”，使用警示色  -->
+        <Style Selector="Button.primary.running /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppDangerBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style Selector="Button.primary.running:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppDangerHoverBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+
+        <!--  次要按钮  -->
+        <Style Selector="Button.subtle">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextPrimaryBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Height" Value="42" />
+            <Setter Property="Padding" Value="18,0" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style Selector="Button.subtle:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppAccentSoftBrush}" />
+        </Style>
     </Application.Styles>
 </Application>

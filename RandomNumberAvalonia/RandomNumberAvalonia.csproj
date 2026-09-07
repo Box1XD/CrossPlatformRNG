@@ -37,8 +37,4 @@
   <ItemGroup>
     <ProjectReference Include="..\RandomNumberAvalonia.Core\RandomNumberAvalonia.Core.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Converters\" />
-  </ItemGroup>
 </Project>

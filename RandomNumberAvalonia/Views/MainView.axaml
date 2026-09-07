@@ -3,175 +3,103 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:RandomNumberAvalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:RandomNumberAvalonia.Converters"
+    xmlns:views="clr-namespace:RandomNumberAvalonia.Views"
     xmlns:vm="clr-namespace:RandomNumberAvalonia.ViewModels"
-    Width="{Binding $parent[Window].Width}"
-    Height="{Binding $parent[Window].Height}"
     x:DataType="vm:MainViewModel"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:EnumToBoolConverter x:Key="EnumToBool" />
+    </UserControl.Resources>
+
     <Design.DataContext>
-        <!--
-            This only sets the DataContext for the previewer in an IDE,
-            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
-        -->
         <vm:MainViewModel />
     </Design.DataContext>
-    <UserControl.Styles>
-        <Style Selector="ToggleSwitch">
-            <Setter Property="FontSize" Value="40" />
-        </Style>
-        <Style Selector="Button">
-            <Setter Property="FontSize" Value="40" />
-        </Style>
-        <Style Selector="Label">
-            <Setter Property="FontSize" Value="40" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-        </Style>
-        <Style Selector="NumericUpDown">
-            <Setter Property="FontSize" Value="40" />
-            <Setter Property="Width" Value="200" />
-            <Setter Property="FormatString" Value="0" />
-        </Style>
-    </UserControl.Styles>
-    <SplitView
-        Width="{Binding $parent[UserControl].Width}"
-        Height="{Binding $parent[UserControl].Height}"
-        CompactPaneLength="50"
-        DisplayMode="CompactInline"
-        IsPaneOpen="{Binding IsPanelOpen}"
-        OpenPaneLength="500"
-        PanePlacement="Left">
-        <SplitView.Pane>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="{Binding $parent[SplitView].CompactPaneLength}" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="3*" />
-                </Grid.RowDefinitions>
-                <Button
-                    Grid.Row="0"
-                    Width="{Binding $parent[SplitView].CompactPaneLength}"
-                    Height="{Binding $parent[SplitView].CompactPaneLength}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Command="{Binding TriggerPanelCommand}"
-                    Content="-"
-                    TextBlock.TextAlignment="Center" />
-                <StackPanel
-                    Grid.Row="1"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
-                    IsVisible="{Binding $parent[SplitView].IsPaneOpen}"
-                    Orientation="Vertical"
-                    Spacing="20">
-                    <Label Content="{Binding Description}" />
-                    <StackPanel Orientation="Horizontal" Spacing="20">
-                        <Label Content="最小值" />
-                        <NumericUpDown
-                            Name="MinimumNumeric"
-                            Maximum="{Binding #MaximumNumeric.Value}"
-                            Minimum="0"
-                            Watermark="最小值"
-                            Value="{Binding MinValue}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Spacing="20">
-                        <Label Content="最大值" />
-                        <NumericUpDown
-                            Name="MaximumNumeric"
-                            Maximum="2147483647"
-                            Minimum="{Binding #MinimumNumeric.Value}"
-                            Watermark="最大值"
-                            Value="{Binding MaxValue}" />
-                    </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Spacing="20" ToolTip.Tip="只会生成不重复的随机数，生成过所有范围内数字后重置">
-                        <Label Content="不重复" />
-                        <ToggleSwitch IsChecked="{Binding IsUniqueEnabled}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Spacing="20" ToolTip.Tip="切换后台代码使用的随机数生成器，除非兼容性问题，不建议关闭">
-                        <Label Margin="-40,0,0,0" Content="强随机数" />
-                        <ToggleSwitch IsChecked="{Binding IsStrongRandomNumberGenerator}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Spacing="20" ToolTip.Tip="生成的随机数会在每个区间平均分布">
-                        <Label Margin="-40,0,0,0" Content="均匀分布" />
-                        <ToggleSwitch IsChecked="{Binding IsRangeEnabled}" />
-                    </StackPanel>
+    <!--  移动端布局：上方内容区 + 底部导航栏，横竖屏自适应  -->
+    <Grid RowDefinitions="*,Auto" Background="{DynamicResource AppBgBrush}">
+
+        <Grid Grid.Row="0">
+            <views:HomePageView IsVisible="{Binding CurrentPage, Converter={StaticResource EnumToBool}, ConverterParameter=Home}" />
+            <views:HistoryPageView IsVisible="{Binding CurrentPage, Converter={StaticResource EnumToBool}, ConverterParameter=History}" />
+            <views:SettingsPageView IsVisible="{Binding CurrentPage, Converter={StaticResource EnumToBool}, ConverterParameter=Settings}" />
+        </Grid>
+
+        <Border
+            Grid.Row="1"
+            Background="{DynamicResource AppCardBrush}"
+            BorderBrush="{DynamicResource AppCardBorderBrush}"
+            BorderThickness="0,1,0,0"
+            Padding="10,6,10,8">
+            <Grid ColumnDefinitions="*,*,*">
+                <RadioButton
+                    Grid.Column="0"
+                    Theme="{StaticResource NavBarItemTheme}"
+                    GroupName="NavBar"
+                    IsChecked="{Binding CurrentPage, Converter={StaticResource EnumToBool}, ConverterParameter=Home, Mode=TwoWay}">
                     <StackPanel
-                        IsVisible="{Binding IsRangeEnabled}"
-                        Orientation="Horizontal"
-                        Spacing="20"
-                        ToolTip.Tip="从最小值起每多少个数字为一个区间，最大不超过最大值。在均匀分布开启时有效">
-                        <Label Margin="40,0,0,0" Content="区间" />
-                        <NumericUpDown
-                            Maximum="{Binding #MaximumNumeric.Value}"
-                            Minimum="1"
-                            Watermark="区间"
-                            Value="{Binding Range}" />
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Vertical"
+                        Spacing="4">
+                        <PathIcon
+                            Width="24"
+                            Height="24"
+                            HorizontalAlignment="Center"
+                            Data="{StaticResource HomeIconGeometry}" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="12"
+                            Text="首页" />
                     </StackPanel>
-                    <StackPanel IsVisible="{Binding IsRangeEnabled}" />
-                    <Button HorizontalAlignment="Center" Command="{Binding ClearGeneratedNumbersCommand}" Content="清除" />
-                </StackPanel>
-                <DataGrid
-                    Name="RandomNumbers"
-                    Grid.Row="2"
-                    Width="200"
-                    Margin="0,10"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    CanUserSortColumns="True"
-                    GridLinesVisibility="Horizontal"
-                    IsReadOnly="True"
-                    IsVisible="{Binding $parent[SplitView].IsPaneOpen}"
-                    ItemsSource="{Binding GeneratedRandomNumbers}">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Width="{Binding #RandomNumbers.Width}" Binding="{Binding}" Header="随机数" />
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Grid>
-        </SplitView.Pane>
-        <SplitView.Content>
-            <Grid Name="grid" MinWidth="500" RowDefinitions="Auto,*">
-                <StackPanel Grid.Row="0">
-                    <Label
-                        Name="Number"
-                        Height="{Binding $parent[Grid].Height}"
-                        Content="{Binding RandomNumber}"
-                        FontSize="300" />
-                </StackPanel>
+                </RadioButton>
 
-                <StackPanel
-                    Grid.Row="1"
-                    Width="{Binding $parent[Grid].Width}"
-                    Height="{Binding $parent[Grid].Height}"
-                    VerticalAlignment="Center"
-                    Spacing="20">
-                    <Button
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Width="{Binding $parent.Width}"
+                <RadioButton
+                    Grid.Column="1"
+                    Theme="{StaticResource NavBarItemTheme}"
+                    GroupName="NavBar"
+                    IsChecked="{Binding CurrentPage, Converter={StaticResource EnumToBool}, ConverterParameter=History, Mode=TwoWay}">
+                    <StackPanel
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Command="{Binding GenerateRandomNumberCommand}"
-                        Content="开始"
-                        FontFamily="雅黑"
-                        FontSize="100"
-                        TextBlock.TextAlignment="Center" />
-                    <Button
-                        Grid.Row="1"
-                        Grid.Column="1"
+                        Orientation="Vertical"
+                        Spacing="4">
+                        <PathIcon
+                            Width="24"
+                            Height="24"
+                            HorizontalAlignment="Center"
+                            Data="{StaticResource HistoryIconGeometry}" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="12"
+                            Text="历史" />
+                    </StackPanel>
+                </RadioButton>
+
+                <RadioButton
+                    Grid.Column="2"
+                    Theme="{StaticResource NavBarItemTheme}"
+                    GroupName="NavBar"
+                    IsChecked="{Binding CurrentPage, Converter={StaticResource EnumToBool}, ConverterParameter=Settings, Mode=TwoWay}">
+                    <StackPanel
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Command="{Binding GenerateRandomNumberCancelCommand}"
-                        Content="停止"
-                        FontFamily="雅黑"
-                        FontSize="100"
-                        TextBlock.TextAlignment="Center" />
-                </StackPanel>
+                        Orientation="Vertical"
+                        Spacing="4">
+                        <PathIcon
+                            Width="24"
+                            Height="24"
+                            HorizontalAlignment="Center"
+                            Data="{StaticResource SettingsIconGeometry}" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="12"
+                            Text="设置" />
+                    </StackPanel>
+                </RadioButton>
             </Grid>
-        </SplitView.Content>
-    </SplitView>
+        </Border>
+    </Grid>
 </UserControl>

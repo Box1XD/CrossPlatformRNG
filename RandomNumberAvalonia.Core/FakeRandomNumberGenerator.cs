@@ -1,13 +1,7 @@
-﻿using System.Security.Cryptography;
-
-namespace RandomNumberAvalonia.Core;
+﻿namespace RandomNumberAvalonia.Core;
 
 public sealed class FakeRandomNumberGenerator : IRandomNumberGenerator
 {
-    private Random randomNumberGenerator;
-
-    private readonly SemaphoreSlim semaphore;
-
     private int fromInclusive = 0;
 
     private int toExclusive = 1;
@@ -19,36 +13,22 @@ public sealed class FakeRandomNumberGenerator : IRandomNumberGenerator
     public int MinValue
     {
         get => fromInclusive;
-        set
-        {
-            fromInclusive = value >= 0 ? value : 0;
-            randomNumberGenerator = new Random(RandomNumberGenerator.GetInt32(39393939));
-        }
+        set => fromInclusive = value >= 0 ? value : 0;
     }
 
     public int MaxValue
     {
         get => toExclusive;
-        set
-        {
-            toExclusive = value > MinValue ? value : MinValue + 1;
-
-            randomNumberGenerator = new Random(RandomNumberGenerator.GetInt32(39393939));
-        }
+        set => toExclusive = value > MinValue ? value : MinValue + 1;
     }
 
     private FakeRandomNumberGenerator()
     {
-        randomNumberGenerator = new Random(RandomNumberGenerator.GetInt32(39393939));
-        semaphore = new(1, 1);
     }
 
-    public async Task<int> Next()
+    public int Next()
     {
-        await semaphore.WaitAsync();
-        int result;
-        result = randomNumberGenerator.Next(MinValue, MaxValue);
-        semaphore.Release();
-        return result;
+        // Random.Shared is thread-safe
+        return Random.Shared.Next(MinValue, MaxValue);
     }
 }

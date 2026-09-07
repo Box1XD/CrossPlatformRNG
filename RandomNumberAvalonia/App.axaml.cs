@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using RandomNumberAvalonia.Services;
 using RandomNumberAvalonia.ViewModels;
 using RandomNumberAvalonia.Views;
 
@@ -21,16 +22,12 @@ namespace RandomNumberAvalonia
                 // Line below is needed to remove Avalonia data validation.
                 // Without this line you will get duplicate validations from both Avalonia and CT
                 BindingPlugins.DataValidators.RemoveAt(0);
+                // 启动时读取配置和历史记录
+                var settings = AppSettings.LoadOrDefault(AppPaths.ConfigPath);
+                var history = new HistoryStore(AppPaths.HistoryPath);
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = new MainViewModel()
-                };
-            }
-            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-            {
-                singleViewPlatform.MainView = new MainView
-                {
-                    DataContext = new MainViewModel()
+                    DataContext = new MainViewModel(settings, history)
                 };
             }
 

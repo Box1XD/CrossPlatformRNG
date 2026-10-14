@@ -82,7 +82,7 @@ jobs:
       - name: Upload test results
         # 即使测试失败也要上传，方便排查
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-${{ matrix.os }}
           path: TestResults/**

@@ -128,7 +128,7 @@ jobs:
         run: ls -lh "${{ steps.meta.outputs.asset }}"
 
       - name: Upload package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: package-${{ matrix.rid }}
           path: ${{ steps.meta.outputs.asset }}

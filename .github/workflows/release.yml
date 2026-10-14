@@ -1,0 +1,179 @@
+name: CD - Release
+
+# 触发时机：
+#   1. 推送 v* 形式的标签（例如 v1.1.0）→ 自动构建多平台安装包并创建 GitHub Release
+#   2. 在 Actions 页面手动运行（可指定标签名做发布演练）
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '发布标签，例如 v1.1.0（标签不存在时会按当前提交自动创建）'
+        required: true
+        type: string
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+  PROJECT: RandomNumberAvalonia.Desktop/RandomNumberAvalonia.Desktop.csproj
+
+permissions:
+  contents: write
+
+jobs:
+  # 发布前先跑一遍测试，测试不过就不发版
+  verify:
+    name: Verify tests
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
+          cache-dependency-path: |
+            Directory.Packages.props
+            Directory.Build.props
+            **/*.csproj
+
+      - name: Test Core
+        run: dotnet test RandomNumberAvalonia.Core.UnitTests -c Release
+
+      - name: Test ViewModels
+        run: dotnet test RandomNumberAvalonia.UnitTests -c Release
+
+  publish:
+    name: Publish ${{ matrix.rid }}
+    needs: verify
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+          - os: ubuntu-latest
+            rid: linux-x64
+          - os: ubuntu-latest
+            rid: linux-arm64
+          - os: macos-latest
+            rid: osx-x64
+          - os: macos-latest
+            rid: osx-arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
+          cache-dependency-path: |
+            Directory.Packages.props
+            Directory.Build.props
+            **/*.csproj
+
+      - name: Resolve version
+        id: meta
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
+          echo "tag=$TAG"                 >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}"         >> "$GITHUB_OUTPUT"
+          echo "asset=RandomNumberAvalonia-${TAG}-${{ matrix.rid }}.zip" >> "$GITHUB_OUTPUT"
+          echo "发布版本: $TAG (${{ matrix.rid }})"
+
+      - name: Publish (self-contained)
+        run: >
+          dotnet publish ${{ env.PROJECT }}
+          -c Release
+          -r ${{ matrix.rid }}
+          --self-contained true
+          --nologo
+          -p:Version=${{ steps.meta.outputs.version }}
+          -p:PublishSingleFile=false
+          -p:DebugType=none
+          -o publish/${{ matrix.rid }}
+
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "publish/${{ matrix.rid }}/*" -DestinationPath "${{ steps.meta.outputs.asset }}"
+
+      - name: Package (Linux / macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          cd "publish/${{ matrix.rid }}"
+          zip -qr "../../${{ steps.meta.outputs.asset }}" .
+
+      - name: Show package size
+        shell: bash
+        run: ls -lh "${{ steps.meta.outputs.asset }}"
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-${{ matrix.rid }}
+          path: ${{ steps.meta.outputs.asset }}
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    name: Create GitHub Release
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all packages
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Resolve tag
+        id: meta
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: List assets
+        run: ls -lh artifacts
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ steps.meta.outputs.tag }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG 已存在，覆盖上传资产"
+            gh release upload "$TAG" artifacts/*.zip --clobber
+          else
+            echo "创建 Release $TAG"
+            gh release create "$TAG" artifacts/*.zip \
+              --title "$TAG" \
+              --generate-notes
+          fi

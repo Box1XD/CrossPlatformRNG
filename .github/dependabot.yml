@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # NuGet 依赖（版本集中在 Directory.Packages.props）
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '02:00'
+      timezone: Asia/Shanghai
+    open-pull-requests-limit: 5
+    groups:
+      avalonia:
+        patterns:
+          - 'Avalonia*'
+      test-sdk:
+        patterns:
+          - 'xunit*'
+          - 'Microsoft.NET.Test.Sdk'
+          - 'coverlet.collector'
+
+  # GitHub Actions 版本
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '02:00'
+      timezone: Asia/Shanghai
+    open-pull-requests-limit: 5
